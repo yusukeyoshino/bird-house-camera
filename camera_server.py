@@ -7,8 +7,13 @@ import requests
 import shutil
 import subprocess
 import threading
-import os
 from collections import deque
+from dotenv import load_dotenv
+
+load_dotenv()
+
+WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK")
+
 
 app = Flask(__name__)
 
