@@ -1,4 +1,4 @@
-from flask import Flask, Response
+from flask import Flask, Response,jsonify, send_from_directory
 from picamera2 import Picamera2
 import cv2
 import time
@@ -145,7 +145,7 @@ def gen_frames():
         latest_frame = frame
         frame_buffer.append(frame.copy())
 
-        # 動体検知（画面全体）
+        # motion detection
         small = cv2.resize(frame, (480, 360))
         gray = cv2.cvtColor(small, cv2.COLOR_BGR2GRAY)
         gray = cv2.GaussianBlur(gray, (15, 15), 0)
@@ -201,6 +201,16 @@ def gen_frames():
 def video():
     return Response(gen_frames(),
         mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route("/images")
+def list_images():
+    files = sorted(os.listdir(IMAGE_DIR), reverse=True)
+    return jsonify(files)
+
+@app.route("/images/<filename>")
+def get_image(filename):
+    return send_from_directory(IMAGE_DIR, filename)
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, threaded=True)
