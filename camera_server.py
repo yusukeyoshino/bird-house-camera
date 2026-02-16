@@ -7,6 +7,7 @@ import requests
 import shutil
 import subprocess
 import threading
+from flask_cors import CORS
 from collections import deque
 from dotenv import load_dotenv
 
@@ -16,6 +17,7 @@ WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK")
 
 
 app = Flask(__name__)
+CORS(app)
 
 IMAGE_DIR = "/mnt/usb/images"
 VIDEO_DIR = "/mnt/usb/videos"
