@@ -7,6 +7,7 @@ import requests
 import shutil
 import subprocess
 import threading
+import datetime
 from flask_cors import CORS
 from collections import deque
 from dotenv import load_dotenv
@@ -204,10 +205,25 @@ def video():
     return Response(gen_frames(),
         mimetype='multipart/x-mixed-replace; boundary=frame')
 
+
 @app.route("/images")
 def list_images():
     files = sorted(os.listdir(IMAGE_DIR), reverse=True)
-    return jsonify(files)
+
+    result = []
+    for f in files:
+        try:
+            ts = int(f.split("_")[1].split(".")[0])
+            date = datetime.datetime.fromtimestamp(ts).isoformat()
+        except:
+            date = None
+
+        result.append({
+            "filename": f,
+            "timestamp": date
+        })
+
+    return jsonify(result)
 
 @app.route("/images/<filename>")
 def get_image(filename):
